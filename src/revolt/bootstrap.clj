@@ -13,6 +13,7 @@
             [revolt.context :refer :all]
             [revolt.plugin :refer [Plugin create-plugin] :as plugin]
             [revolt.utils :as utils]
+            [clojure.pprint :refer [pprint]]
             [revolt.task :as task]))
 
 (defonce status  (atom :not-initialized))
@@ -51,12 +52,11 @@
   (doseq [p plugins]
     (.deactivate p (get @returns p))))
 
-(defn -main
-  [& args]
-  (let [params (:options (cli/parse-opts args cli-options))
-        target (:target params)
+(defn bootstrap [params]
+  (let [target (:target params)
         config (:config params)
         cpaths (collect-classpaths target)]
+
 
     (if-let [config-edn (load-config config)]
       (let [returns (atom {})
@@ -96,3 +96,8 @@
           (slurp *in*))
         (System/exit 0))
       (log/error "Configuration not found."))))
+
+(defn -main
+  [& args]
+  (let [params (:options (cli/parse-opts args cli-options))]
+    (bootstrap params)))
