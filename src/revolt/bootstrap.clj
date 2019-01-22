@@ -13,7 +13,6 @@
             [revolt.context :refer :all]
             [revolt.plugin :refer [Plugin create-plugin] :as plugin]
             [revolt.utils :as utils]
-            [clojure.pprint :refer [pprint]]
             [revolt.task :as task]))
 
 (defonce status  (atom :not-initialized))
