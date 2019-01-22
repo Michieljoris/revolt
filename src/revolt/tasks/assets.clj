@@ -3,6 +3,7 @@
             [clojure.string :as str]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
+            [clojure.pprint :refer [pprint]]
             [revolt.utils :as utils])
   (:import  (java.io File)
             (java.nio.file StandardCopyOption)
@@ -50,8 +51,8 @@
 
 (defn fingerprint
   "Fingerprinting resources"
-  [path]
-  (let [assets-file (io/file path)
+  [path public-path]
+  (let [assets-file (io/file path public-path)
         assets-path (.toPath assets-file)]
     (filter
      (complement nil?)
@@ -84,7 +85,7 @@
       file)))
 
 (defn invoke
-  [ctx {:keys [assets-paths exclude-paths update-with-exts options]} classpaths target]
+  [ctx {:keys [assets-paths exclude-paths update-with-exts options public-path]} classpaths target]
   (let [assets-path (utils/ensure-relative-path target "assets")
         extensions (map #(str "." (.toLowerCase %)) update-with-exts)]
 
@@ -95,7 +96,7 @@
 
     (utils/timed
      "FINGERPRINTING"
-     (let [assets-kv (into {} (fingerprint assets-path))
+     (let [assets-kv (into {} (fingerprint assets-path public-path))
            patterns  (map #(vector (re-pattern (first %)) (second %)) assets-kv)]
 
        (-> ctx
