@@ -27,7 +27,10 @@
     ;; run SASS compilation for every single file found in
     ;; source-path, which file name does not start with _
 
-    (let [file (when file (io/file file))
+    ;; NOTE: When using file without .toString this errors can happen:
+    ;; ERROR | No implementation of method: :as-file of protocol: #'clojure.java.io/Coercions found for class: sun.nio.fs.UnixPath
+    (let [file (when file (io/file (.toString file)))
+
           partial? (and file (.startsWith (.getName file) "_"))
           path (if partial?
                  (.toFile source-path)
